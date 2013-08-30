@@ -87,6 +87,7 @@
 
     <div class="demographics">
         <h1 class="name">
+        ${config.patientImageHtml}
             <span>${ui.format(patient.patient.familyName)},<em>${ui.message("coreapps.patientHeader.surname")}</em></span>
             <span>${ui.format(patient.patient.givenName)}<em>${ui.message("coreapps.patientHeader.name")}</em></span>
 
