@@ -46,4 +46,10 @@ public class PatientHeaderFragmentControllerTest {
 		controller.controller(mockedFragmentConfiguration, mockedEmrApiProperties, null, null, null, mockedAdtService, mockedUiSessionContext, mockedFeatureToggleProperties);
 		verify(mockedFragmentConfiguration).addAttribute(eq("patientImageHtml"), anyString());
 	}
+	
+	@Test
+	public void shouldGetTheConceptPhoto(){
+		controller.controller(mockedFragmentConfiguration, mockedEmrApiProperties, null, null, null, mockedAdtService, mockedUiSessionContext, mockedFeatureToggleProperties);
+		
+	}
 }
