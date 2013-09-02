@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -32,10 +33,13 @@ import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.idgen.AutoGenerationOption;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
+import org.openmrs.module.registrationapp.RegistrationAppConstants;
+import org.openmrs.obs.ComplexObsHandler;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
+import org.openmrs.web.WebConstants;
 import org.openmrs.ConceptComplex;
 
 /**
@@ -64,6 +68,14 @@ public class PatientHeaderFragmentController {
 		String imageTag = handler.getObs(obs, WebConstants.HTML_VIEW).getComplexDate().getData();
 		config.addAttribute("patientImageHtml", imageTag);
 		*/
+		
+		String photoConceptUuid = Context.getAdministrationService().getGlobalProperty(RegistrationAppConstants.GP_PHOTO_PATIENT_CONCEPT_UUID);
+		Concept concept = Context.getConceptService().getConceptByUuid(photoConceptUuid);
+		//Obs obs = new Obs(patient, concept, new Date(), sessionContext.getSessionLocation());
+		//String handlerName = ((ConceptComplex)obs.getConcept()).getHandler();
+		//ComplexObsHandler handler = Context.getObsService().getHandler(handlerName);
+		//String imageTag = handler.getObs(obs, WebConstants.HTML_VIEW).getComplexData().getData();
+		//config.addAttribute("patientImageHtml", imageTag);
 	
 		config.addAttribute("patientImageHtml", "<img src= \"http://t2.gstatic.com/images?q=tbn:ANd9GcQHmyF5yYH5hudnlnxcDjBYuos9FEb8d2LlHvHhrdqr3Dyd7Ni03g\"/>");
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");

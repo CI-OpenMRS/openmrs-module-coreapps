@@ -90,6 +90,12 @@
             When adding a new patient identifier via the patient dashboard, the location to use if not specified (and the identifier type requires a location)
         </description>
     </globalProperty>
+    
+    <globalProperty>
+		<property>registrationapp.patientPhotoConceptUuid</property>
+		<defaultValue></defaultValue>
+		<description>The UUID of the Patient's photo concept.</description>
+	</globalProperty>
 
 </module>
 
