@@ -53,19 +53,23 @@ public class PatientHeaderFragmentController {
 	                       @FragmentParam("patient") Object patient, @InjectBeans PatientDomainWrapper wrapper,
 	                       @SpringBean("adtService") AdtService adtService, UiSessionContext sessionContext,
                            @SpringBean("featureToggles") FeatureToggleProperties featureToggleProperties) {
+
 		
 		if (patient instanceof Patient) {
 			wrapper.setPatient((Patient) patient);
 			config.addAttribute("patient", wrapper);
+			
 		}
 		
+
 		config.addAttribute("patientImageHtml", getPatientImage(patient));
 		
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
 		
 		if (activeVisit == null) {
             try {
-                Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
+            	Location sessionLocation = sessionContext.getSessionLocation();
+                Location visitLocation = adtService.getLocationThatSupportsVisits(sessionLocation);
                 activeVisit = adtService.getActiveVisit((Patient) patient, visitLocation);
             } catch (IllegalArgumentException ex) {
                 // location does not support visits
@@ -89,6 +93,9 @@ public class PatientHeaderFragmentController {
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("hideEditDemographicsButton", featureToggleProperties.isFeatureEnabled("hideEditPatientDemographicsButton"));
         config.addAttribute("isNewPatientHeaderEnabled", featureToggleProperties.isFeatureEnabled("enableNewPatientHeader"));
+        
+        
+        
 	}
 	
 	
@@ -134,6 +141,7 @@ public class PatientHeaderFragmentController {
 		public void setEditable(boolean editable) {
 			this.editable = editable;
 		}
+		
 	}
 	
 }
