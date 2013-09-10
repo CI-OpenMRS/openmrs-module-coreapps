@@ -14,27 +14,33 @@
 
 package org.openmrs.module.coreapps.fragment.controller;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.openmrs.Concept;
 import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.coreapps.CoreAppsConstants;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.idgen.AutoGenerationOption;
 import org.openmrs.module.idgen.service.IdentifierSourceService;
+import org.openmrs.obs.ComplexObsHandler;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
+import org.openmrs.web.WebConstants;
 
 /**
  * Ideally you pass in a PatientDomainWrapper as the "patient" config parameter. But if you pass in
@@ -53,7 +59,10 @@ public class PatientHeaderFragmentController {
 			config.addAttribute("patient", wrapper);
 		}
 		
+		config.addAttribute("patientImageHtml", getPatientImage(patient));
+		
 		VisitDomainWrapper activeVisit = (VisitDomainWrapper) config.getAttribute("activeVisit");
+		
 		if (activeVisit == null) {
             try {
                 Location visitLocation = adtService.getLocationThatSupportsVisits(sessionContext.getSessionLocation());
@@ -80,6 +89,23 @@ public class PatientHeaderFragmentController {
 		config.addAttribute("extraPatientIdentifierTypes", extraPatientIdentifierTypes);
         config.addAttribute("hideEditDemographicsButton", featureToggleProperties.isFeatureEnabled("hideEditPatientDemographicsButton"));
         config.addAttribute("isNewPatientHeaderEnabled", featureToggleProperties.isFeatureEnabled("enableNewPatientHeader"));
+	}
+	
+	
+	public String getPatientImage(Object patient) {
+		String photoConceptUuid = Context.getAdministrationService().getGlobalProperty(CoreAppsConstants.GP_PHOTO_PATIENT_CONCEPT_UUID);
+		
+		Concept concept = Context.getConceptService().getConceptByUuid(photoConceptUuid);
+		int i = Context.getObsService().getObservationsByPersonAndConcept((Person) patient, concept).size();
+		Obs obs = (Obs) Context.getObsService().getObservationsByPersonAndConcept((Person) patient, concept).get(i-1);
+		ConceptService conceptService = Context.getConceptService();
+		String key = conceptService.getConceptComplex(obs.getConcept().getConceptId()).getHandler();
+		ComplexObsHandler handler = Context.getObsService().getHandler(key);
+		handler.getObs(obs, key);
+		String imageTag = (String) handler.getObs(obs, WebConstants.HTML_VIEW).getComplexData().getData();
+		
+		return imageTag;
+
 	}
 	
 	public class ExtraPatientIdentifierType {
